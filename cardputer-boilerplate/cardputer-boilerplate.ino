@@ -34,7 +34,7 @@ void drawSplash() {
     canvas.setTextDatum(middle_center);
     canvas.setTextSize(1.75);
     canvas.setTextColor(0x18CE);  // TFT_MIDNIGHTBLUE 0x18CE
-    canvas.drawString("boilerplate", canvas.width() / 2, canvas.height() / 2 - 20);
+    canvas.drawString("BOILERPLATE", canvas.width() / 2, canvas.height() / 2 - 20);
     
     // Draw GitHub URL in small COLOR font
     canvas.setTextSize(1);
@@ -59,7 +59,7 @@ void setup() {
     M5Cardputer.Display.setRotation(1);
 
     canvas.setColorDepth(8);
-    canvas.setTextFont(&fonts::FreeMonoBoldOblique9pt7b, &fonts::);
+    canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
     canvas.createSprite(240, 135);
     canvas.setTextSize(1);
     canvas.setTextScroll(false);
