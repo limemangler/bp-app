@@ -28,23 +28,23 @@ unsigned long splashStartTime = 0;
 // Splash screen
 void drawSplash() {
     // Fill background with COLOR
-    canvas.fillSprite(DARKGREY);
+    canvas.fillSprite(0x0451); //TFT_DARKCYAN2 0x0451
     
     // Draw "text" in big COLOR font
     canvas.setTextDatum(middle_center);
-    canvas.setTextSize(1.5);
-    canvas.setTextColor(PURPLE);  // PURPLE
+    canvas.setTextSize(1.75);
+    canvas.setTextColor(0x18CE);  // TFT_MIDNIGHTBLUE 0x18CE
     canvas.drawString("boilerplate", canvas.width() / 2, canvas.height() / 2 - 20);
     
     // Draw GitHub URL in small COLOR font
-    canvas.setTextSize(0.75);
-    canvas.setTextColor(GREEN);  // Green
-    canvas.drawString("by limemangler", canvas.width() / 2, canvas.height() / 2 + 10);
+    canvas.setTextSize(1);
+    canvas.setTextColor(0x07E0);  // TFT_LIME 0x07E0
+    canvas.drawString("by limemangler", canvas.width() / 2, canvas.height() / 2 + 30);
     //github.com/limemangler
 
-    // Draw version in COLOR
+    // Draw version number in COLOR or 0x0000
     canvas.setTextSize(0.75);
-    canvas.setTextColor(YELLOW);
+    canvas.setTextColor(0xFFD9); // TFT_LEMONCHIFFON  0xFFD9
     canvas.drawString("Version 0.1", canvas.width() / 2, canvas.height() / 2 + 50);
     
     canvas.pushSprite(0, 0);
@@ -59,7 +59,7 @@ void setup() {
     M5Cardputer.Display.setRotation(1);
 
     canvas.setColorDepth(8);
-    canvas.setTextFont(&fonts::FreeMonoBoldOblique9pt7b);
+    canvas.setTextFont(&fonts::FreeMonoBoldOblique9pt7b, &fonts::);
     canvas.createSprite(240, 135);
     canvas.setTextSize(1);
     canvas.setTextScroll(false);
