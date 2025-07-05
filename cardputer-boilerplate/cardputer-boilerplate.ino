@@ -16,12 +16,17 @@
   * + beginner friendly
 */
 
-// These libraries must be included to run a basic app on a cardputer
+// These libraries must be included to run this basic app on a cardputer
 #include "M5Cardputer.h" // compatible with esp-32 architecture 
 #include "M5GFX.h" // graphics library
 
+// -------- //
 
+// adds the  canvas variable 
 M5Canvas canvas(&M5Cardputer.Display);
+
+bool showMenu = false;
+bool showSplash = true;
 unsigned long splashStartTime = 0;
 
 
@@ -50,6 +55,34 @@ void drawSplash() {
     canvas.pushSprite(0, 0);
 }
 
+
+// MENU UI
+void drawMenu() {
+  canvas.fillSprite(RED);
+  canvas.setTextColor(WHITE);
+  canvas.setTextDatum(top_left);
+  canvas.setTextSize(1);
+  int y = 10;
+
+  canvas.drawString("[I] Input text", 10, y); y += 18;
+  canvas.drawString("[B] Back to splash screen", 10, y); y += 18;
+
+  canvas.pushSprite(0,0);
+ 
+}
+
+// Main UI
+
+void drawUI() {
+  canvas.fillSprite(BLACK);
+  canvas.setTextColor(YELLOW);
+  canvas.setTextDatum(top_left);
+  canvas.setTextSize(1);
+
+  canvas.pushSprite(0,0);
+}
+
+
 // * this is the setup which will initialize all the stuff we do in the loop -- 
 // * setup runs ONLY ONCE, when the app is first initialized 
 // * and will not run again until restart 
@@ -73,5 +106,43 @@ void setup() {
 // * this is the loop, where we will add functionality
 // * this loop will run continuously while the app is running
 void loop() {
-  // do all the things
+  M5Cardputer.update();
+
+  // splash screen timeout 3 seconds
+  if (showSplash && millis() - splashStartTime > 3000) {
+    showSplash = false;
+    drawMenu();
+  }
+
+  if (showSplash) {
+    // Skip any other steps while the Splash is active
+    delay(100);
+    return;
+  }
+
+  if (M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
+    auto keys = M5Cardputer.Keyboard.keysState();
+
+    if (showMenu) {
+      showMenu = false;
+      return;
+    }
+
+    bool recognized = false;
+
+    for (auto c : keys.word) {
+      if (c == 'I' || c == 'i') {
+        // go to text input screen
+        drawUI(); recognized = true;
+      } else if (c == 'B' || c == 'b') {
+        // go back to splash screen
+        drawSplash(); recognized = true;
+      }
+    }
+    if (!recognized) {
+      showSplash = true;
+      drawMenu();
+    }
+  }
+
 }
