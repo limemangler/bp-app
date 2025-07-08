@@ -26,41 +26,74 @@
 M5Canvas canvas(&M5Cardputer.Display);
 
 bool showMenu = false;
-bool showSplash = true;
-unsigned long splashStartTime = 0;
+bool menuInput = false;
+bool showSplash = false;
+bool showTextInput = false;
+
+// String data = "> ";
+// unsigned long splashStartTime = 0;
 
 
 // Splash screen
 void drawSplash() {
-    // Fill background with COLOR
-    canvas.fillSprite(0x0451); //TFT_DARKCYAN2 0x0451
-    
-    // Draw "text" in big COLOR font
-    canvas.setTextDatum(middle_center);
-    canvas.setTextSize(1.75);
-    canvas.setTextColor(0x18CE);  // TFT_MIDNIGHTBLUE 0x18CE
-    canvas.drawString("BOILERPLATE", canvas.width() / 2, canvas.height() / 2 - 20);
-    
-    // Draw GitHub URL in small COLOR font
-    canvas.setTextSize(1);
-    canvas.setTextColor(0x07E0);  // TFT_LIME 0x07E0
-    canvas.drawString("by limemangler", canvas.width() / 2, canvas.height() / 2 + 30);
-    //github.com/limemangler
+  M5Cardputer.update();
+  M5Cardputer.Display.clear();
 
-    // Draw version number in COLOR or 0x0000
-    canvas.setTextSize(0.75);
-    canvas.setTextColor(0xFFD9); // TFT_LEMONCHIFFON  0xFFD9
-    canvas.drawString("Version 0.1", canvas.width() / 2, canvas.height() / 2 + 50);
-    
-    canvas.pushSprite(0, 0);
+  showMenu = false;
+  showSplash = true;
+  showTextInput = false;
+
+  M5Cardputer.Display.setRotation(1);
+
+  canvas.setColorDepth(8);
+  canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
+  canvas.createSprite(240, 135);
+  canvas.setTextSize(1);
+  canvas.setTextScroll(false);
+  canvas.setTextWrap(true);
+
+  // Fill background with COLOR
+  canvas.fillSprite(0x0451); //TFT_DARKCYAN2 0x0451
+  
+  // Draw "text" in big COLOR font
+  canvas.setTextDatum(middle_center);
+  canvas.setTextSize(1.75);
+  canvas.setTextColor(0x18CE);  // TFT_MIDNIGHTBLUE 0x18CE
+  canvas.drawString("BOILERPLATE", canvas.width() / 2, canvas.height() / 2 - 20);
+  
+  // Draw GitHub URL in small COLOR font
+  canvas.setTextSize(1);
+  canvas.setTextColor(0x07E0);  // TFT_LIME 0x07E0
+  canvas.drawString("by limemangler", canvas.width() / 2, canvas.height() / 2 + 30);
+  //github.com/limemangler
+
+  // Draw version number in COLOR or 0x0000
+  canvas.setTextSize(0.75);
+  canvas.setTextColor(0xFFD9); // TFT_LEMONCHIFFON  0xFFD9
+  canvas.drawString("Version 0.1", canvas.width() / 2, canvas.height() / 2 + 50);
+  
+  canvas.pushSprite(0, 0);
+  delay(5000);
+  drawMenu();
+  // drawUI();
 }
 
 
-// MENU UI
-void drawMenu() {
-  canvas.fillSprite(RED);
+// check for menu input
+void drawMenu(){
+  M5Cardputer.update();
+  M5Cardputer.Display.clear();
+
+  showMenu = true;
+  menuInput = true;
+  showSplash = false;
+  showTextInput = false;
+
+  canvas.fillSprite(BLACK);
   canvas.setTextColor(WHITE);
   canvas.setTextDatum(top_left);
+  canvas.setTextScroll(false);
+  canvas.setTextWrap(true);
   canvas.setTextSize(1);
   int y = 10;
 
@@ -68,18 +101,112 @@ void drawMenu() {
   canvas.drawString("[B] Back to splash screen", 10, y); y += 18;
 
   canvas.pushSprite(0,0);
- 
-}
 
+  bool listening = true;
+
+  while (listening) {
+    M5Cardputer.update();
+    // Serial.println("first");
+    if (M5Cardputer.Keyboard.isChange()) {
+      if (M5Cardputer.Keyboard.isPressed()) {
+          Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+      
+        bool recognized = false;
+
+        for (auto c : status.word) {
+          if (c == 'I' || c == 'i') {
+          Serial.println("input");
+
+            // go to text input screen
+            drawUI(); recognized = true; showMenu = false; menuInput = false; listening = false;
+            return;
+          } else if (c == 'B' || c == 'b') {
+          Serial.println("input");
+
+            // go back to splash screen
+            drawSplash(); recognized = true; showMenu = false; menuInput = false; listening = false;
+            return;
+          } 
+        }
+        if (!recognized) {
+          showMenu = true; menuInput = true;
+          drawMenu();
+        } 
+        return;
+      }    
+      // canvas.pushSprite(0,0);
+      // return;
+    }
+  }
+    canvas.pushSprite(0,0);
+    Serial.println("here");
+}
 // Main UI
 
 void drawUI() {
-  canvas.fillSprite(BLACK);
-  canvas.setTextColor(YELLOW);
-  canvas.setTextDatum(top_left);
-  canvas.setTextSize(1);
+  // canvas.fillSprite(BLACK);
+  // canvas.setTextColor(YELLOW);
+  // canvas.setTextDatum(top_left);
+  // canvas.setTextSize(1);
 
-  canvas.pushSprite(0,0);
+  // canvas.pushSprite(0,0);
+  M5Cardputer.update();
+  M5Cardputer.Display.clear();
+
+  String data = "> ";
+  showMenu = false;
+  showSplash = false;
+  showTextInput = true;
+  
+  M5Cardputer.Display.setRotation(1);
+  M5Cardputer.Display.setTextSize(0.5);
+  M5Cardputer.Display.drawRect(0, 0, M5Cardputer.Display.width(),
+                                M5Cardputer.Display.height() - 28, GREEN);
+  M5Cardputer.Display.setTextFont(&fonts::FreeSerifBoldItalic18pt7b);
+
+  M5Cardputer.Display.fillRect(0, M5Cardputer.Display.height() - 4,
+                                M5Cardputer.Display.width(), 4, GREEN);
+
+  canvas.setTextFont(&fonts::FreeSerifBoldItalic18pt7b);
+  canvas.setTextSize(0.5);
+  canvas.createSprite(M5Cardputer.Display.width() - 8,
+                      M5Cardputer.Display.height() - 36);
+  canvas.setTextScroll(true);
+  canvas.println("Press Key and Enter to Input Text");
+  canvas.pushSprite(4, 4);
+  M5Cardputer.Display.drawString(data, 4, M5Cardputer.Display.height() - 24);
+
+  while (true) {
+    M5Cardputer.update();
+    if (M5Cardputer.Keyboard.isChange()) {
+        if (M5Cardputer.Keyboard.isPressed()) {
+            Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
+            for (auto i : status.word) {
+                data += i;
+                Serial.println(data);
+            }
+
+            if (status.del) {
+                data.remove(data.length() - 1);
+                Serial.println(data);
+            }
+
+            if (status.enter) {
+                data.remove(0, 2);
+                canvas.println(data);
+                canvas.pushSprite(4, 4);
+                data = "> ";
+                Serial.println(data);
+                // break;
+            }
+
+            M5Cardputer.Display.fillRect(0, M5Cardputer.Display.height() - 28, M5Cardputer.Display.width(), 25, BLACK);
+
+            M5Cardputer.Display.drawString(data, 4, M5Cardputer.Display.height() - 24);
+        }
+    }
+  }
+  return;
 }
 
 
@@ -87,62 +214,27 @@ void drawUI() {
 // * setup runs ONLY ONCE, when the app is first initialized 
 // * and will not run again until restart 
 void setup() {
-    auto cfg = M5.config();
-    M5Cardputer.begin(cfg, true);
-    M5Cardputer.Display.setRotation(1);
+  auto cfg = M5.config();
+  M5Cardputer.begin(cfg, true);
+  Serial.begin(9600);
+  M5Cardputer.update();
+  M5Cardputer.Display.setRotation(1);
 
-    canvas.setColorDepth(8);
-    canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
-    canvas.createSprite(240, 135);
-    canvas.setTextSize(1);
-    canvas.setTextScroll(false);
-    canvas.setTextWrap(true);
+  canvas.setColorDepth(8);
+  canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
+  canvas.createSprite(240, 135);
+  canvas.setTextSize(1);
+  canvas.setTextScroll(false);
+  canvas.setTextWrap(true);
 
-    splashStartTime = millis();
-    drawSplash();
+  drawSplash();
+  
 }
 
 
 // * this is the loop, where we will add functionality
 // * this loop will run continuously while the app is running
+// * in a larger app with multi functions you may want to leave this empty
 void loop() {
-  M5Cardputer.update();
-
-  // splash screen timeout 3 seconds
-  if (showSplash && millis() - splashStartTime > 3000) {
-    showSplash = false;
-    drawMenu();
-  }
-
-  if (showSplash) {
-    // Skip any other steps while the Splash is active
-    delay(100);
-    return;
-  }
-
-  if (M5Cardputer.Keyboard.isChange() && M5Cardputer.Keyboard.isPressed()) {
-    auto keys = M5Cardputer.Keyboard.keysState();
-
-    if (showMenu) {
-      showMenu = false;
-      return;
-    }
-
-    bool recognized = false;
-
-    for (auto c : keys.word) {
-      if (c == 'I' || c == 'i') {
-        // go to text input screen
-        drawUI(); recognized = true;
-      } else if (c == 'B' || c == 'b') {
-        // go back to splash screen
-        drawSplash(); recognized = true;
-      }
-    }
-    if (!recognized) {
-      showSplash = true;
-      drawMenu();
-    }
-  }
 
 }
