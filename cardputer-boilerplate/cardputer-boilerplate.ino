@@ -66,14 +66,9 @@ void drawMenu(){
   M5Cardputer.update();
   M5Cardputer.Display.clear();
 
-  // Set global variables
-  // canvas.setColorDepth(8);
-  // canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
-  // canvas.createSprite(240, 135);
-  // canvas.setTextSize(1);
-  // canvas.setTextScroll(false);
-  // canvas.setTextWrap(true);
+  // Set the y axis for the Welcome Banner Text based on canvas.setTextDatum(middle_center)
   int y = canvas.height() / 2 - 35;
+
   // set background color
   canvas.fillSprite(BLACK);
 
@@ -84,21 +79,29 @@ void drawMenu(){
   canvas.setTextColor(BLUE);
   canvas.drawString("WELCOME", canvas.width() / 2, y);
 
-  // draw menu items
+  // draw menu items below the Welcome banner text 
   canvas.setTextDatum(top_left);
   canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
   canvas.setTextColor(GREEN);
   canvas.setTextSize(1);
   canvas.setTextScroll(false);
   canvas.setTextWrap(true);
+  // add a buffer space to the y axis to create space between banner and menu items
   y += 25;
 
+  // add each menu item here
+  // make sure to add new menu options to listening function below
   canvas.drawString("[I] Input text", 5, y); y += 18;
   canvas.drawString("[B] Back to Splash", 5, y); y += 18;
 
+  // send the graphical data to the screen to render
   canvas.pushSprite(0,0);
 
+  // set bool (true, false) for listening to make sure the device is waiting
+  // for new input from the keyboard
   bool listening = true;
+  // set bool (true, false) for showing the menu options or moving on to
+  // a valid button press
   bool showMenu = true;
   
   while (listening) {
@@ -106,14 +109,17 @@ void drawMenu(){
     if (M5Cardputer.Keyboard.isChange()) {
       if (M5Cardputer.Keyboard.isPressed()) {
           Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
-      
+
+        // set bool (true, false) to recognize if the button press
+        // has a corresponding function to move to the next screen
         bool recognized = false;
 
         for (auto c : status.word) {
+          // if the input is I or i then go to the [I]nput Text and stop the listening loop
+          // else if the input is B or b then go to the [B]ack to Splash and stop the listening loop
+          // else if the input is [V] or [v] then go to [V]ariable screen and stop the listening loop
           if (c == 'I' || c == 'i') {
           // Serial.println("input"); // turn this on to test keyboard inputs
-
-            // go to text input screen
             drawUI(); recognized = true; listening = false;
             return;
           } else if (c == 'B' || c == 'b') {
@@ -124,14 +130,17 @@ void drawMenu(){
             return;
           } 
         }
+        // if the input is not one of the above options, keep showing the menu
         if (!recognized) {
           showMenu = true;
           drawMenu();
         } 
+        // exit function
         return;
       }    
     }
   }
+    // send graphical data to render on screen
     canvas.pushSprite(0,0);
 }
 
