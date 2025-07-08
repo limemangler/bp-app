@@ -44,10 +44,10 @@ void drawSplash() {
   canvas.drawString("BOILERPLATE", canvas.width() / 2, canvas.height() / 2 - 20);
   
   // Draw GitHub URL in small COLOR font
-  canvas.setTextSize(1);
+  canvas.setTextSize(.90);
   canvas.setTextColor(TFT_GREEN);  // TFT_GREEN 0x07E0
-  canvas.drawString("by limemangler", canvas.width() / 2, canvas.height() / 2 + 30);
-  //github.com/limemangler
+  canvas.drawString("github.com/limemangler", canvas.width() / 2, canvas.height() / 2 + 30);
+  //
 
   // Draw version number in COLOR or 0x0000
   canvas.setTextSize(0.75);
