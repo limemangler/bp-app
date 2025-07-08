@@ -19,29 +19,12 @@
 // These libraries must be included to run this basic app on a cardputer
 #include "M5Cardputer.h" // compatible with esp-32 architecture 
 #include "M5GFX.h" // graphics library
-
-// -------- //
-
-// adds the  canvas variable 
-M5Canvas canvas(&M5Cardputer.Display);
-
-bool showMenu = false;
-bool menuInput = false;
-bool showSplash = false;
-bool showTextInput = false;
-
-// String data = "> ";
-// unsigned long splashStartTime = 0;
-
+M5Canvas canvas(&M5Cardputer.Display); // adds the  canvas variable 
 
 // Splash screen
 void drawSplash() {
   M5Cardputer.update();
   M5Cardputer.Display.clear();
-
-  showMenu = false;
-  showSplash = true;
-  showTextInput = false;
 
   M5Cardputer.Display.setRotation(1);
 
@@ -75,7 +58,6 @@ void drawSplash() {
   canvas.pushSprite(0, 0);
   delay(5000);
   drawMenu();
-  // drawUI();
 }
 
 
@@ -84,29 +66,43 @@ void drawMenu(){
   M5Cardputer.update();
   M5Cardputer.Display.clear();
 
-  showMenu = true;
-  menuInput = true;
-  showSplash = false;
-  showTextInput = false;
-
+  // Set global variables
+  // canvas.setColorDepth(8);
+  // canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
+  // canvas.createSprite(240, 135);
+  // canvas.setTextSize(1);
+  // canvas.setTextScroll(false);
+  // canvas.setTextWrap(true);
+  int y = canvas.height() / 2 - 35;
+  // set background color
   canvas.fillSprite(BLACK);
-  canvas.setTextColor(WHITE);
+
+  // Draw Welcome Text
+  canvas.setTextDatum(middle_center);
+  canvas.setTextSize(1.5);
+  canvas.setTextFont(&fonts::Orbitron_Light_24);
+  canvas.setTextColor(BLUE);
+  canvas.drawString("WELCOME", canvas.width() / 2, y);
+
+  // draw menu items
   canvas.setTextDatum(top_left);
+  canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
+  canvas.setTextColor(GREEN);
+  canvas.setTextSize(1);
   canvas.setTextScroll(false);
   canvas.setTextWrap(true);
-  canvas.setTextSize(1);
-  int y = 10;
+  y += 25;
 
-  canvas.drawString("[I] Input text", 10, y); y += 18;
-  canvas.drawString("[B] Back to splash screen", 10, y); y += 18;
+  canvas.drawString("[I] Input text", 5, y); y += 18;
+  canvas.drawString("[B] Back to Splash", 5, y); y += 18;
 
   canvas.pushSprite(0,0);
 
   bool listening = true;
-
+  bool showMenu = true;
+  
   while (listening) {
     M5Cardputer.update();
-    // Serial.println("first");
     if (M5Cardputer.Keyboard.isChange()) {
       if (M5Cardputer.Keyboard.isPressed()) {
           Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
@@ -115,48 +111,37 @@ void drawMenu(){
 
         for (auto c : status.word) {
           if (c == 'I' || c == 'i') {
-          Serial.println("input");
+          // Serial.println("input"); // turn this on to test keyboard inputs
 
             // go to text input screen
-            drawUI(); recognized = true; showMenu = false; menuInput = false; listening = false;
+            drawUI(); recognized = true; listening = false;
             return;
           } else if (c == 'B' || c == 'b') {
-          Serial.println("input");
+          // Serial.println("input"); // turn this on to test keyboard inputs
 
             // go back to splash screen
-            drawSplash(); recognized = true; showMenu = false; menuInput = false; listening = false;
+            drawSplash(); recognized = true; listening = false;
             return;
           } 
         }
         if (!recognized) {
-          showMenu = true; menuInput = true;
+          showMenu = true;
           drawMenu();
         } 
         return;
       }    
-      // canvas.pushSprite(0,0);
-      // return;
     }
   }
     canvas.pushSprite(0,0);
-    Serial.println("here");
 }
-// Main UI
+
+// Main UI for Text Input Screen
 
 void drawUI() {
-  // canvas.fillSprite(BLACK);
-  // canvas.setTextColor(YELLOW);
-  // canvas.setTextDatum(top_left);
-  // canvas.setTextSize(1);
-
-  // canvas.pushSprite(0,0);
   M5Cardputer.update();
   M5Cardputer.Display.clear();
 
   String data = "> ";
-  showMenu = false;
-  showSplash = false;
-  showTextInput = true;
   
   M5Cardputer.Display.setRotation(1);
   M5Cardputer.Display.setTextSize(0.5);
@@ -183,12 +168,12 @@ void drawUI() {
             Keyboard_Class::KeysState status = M5Cardputer.Keyboard.keysState();
             for (auto i : status.word) {
                 data += i;
-                Serial.println(data);
+                // Serial.println(data);
             }
 
             if (status.del) {
                 data.remove(data.length() - 1);
-                Serial.println(data);
+                // Serial.println(data);
             }
 
             if (status.enter) {
@@ -196,7 +181,7 @@ void drawUI() {
                 canvas.println(data);
                 canvas.pushSprite(4, 4);
                 data = "> ";
-                Serial.println(data);
+                // Serial.println(data);
                 // break;
             }
 
@@ -209,17 +194,18 @@ void drawUI() {
   return;
 }
 
-
-// * this is the setup which will initialize all the stuff we do in the loop -- 
-// * setup runs ONLY ONCE, when the app is first initialized 
-// * and will not run again until restart 
+/* this is the setup which will initialize all the stuff we do in the loop -- 
+  * setup runs ONLY ONCE, when the app is first initialized 
+  * and will not run again until restart 
+*/
 void setup() {
   auto cfg = M5.config();
   M5Cardputer.begin(cfg, true);
-  Serial.begin(9600);
+  // Serial.begin(9600); // turn this on for debugging
   M5Cardputer.update();
   M5Cardputer.Display.setRotation(1);
 
+  // sets up the display for the cardputer with a few defaults
   canvas.setColorDepth(8);
   canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
   canvas.createSprite(240, 135);
@@ -227,14 +213,17 @@ void setup() {
   canvas.setTextScroll(false);
   canvas.setTextWrap(true);
 
+  // runs the function to display the Splash screen 
   drawSplash();
-  
 }
 
+/*
+* this is the loop, where we will add functionality
+* this loop will run continuously while the app is running
+* in a larger app with multi functions you may want to leave this empty
+* and create different functions for more modular structure
+*/
 
-// * this is the loop, where we will add functionality
-// * this loop will run continuously while the app is running
-// * in a larger app with multi functions you may want to leave this empty
 void loop() {
-
+  // simple loop to do the things
 }
