@@ -12,6 +12,6 @@ This is the first app I've ever built as a tool to help me learn C++, but hopefu
 + **Splash Screen Demo**
 + **Basic Menu with Functionality**
 + **Basic Text Input Window** using the M5Stack text input example:
-                             https://github.com/m5stack/M5Cardputer 
+    https://github.com/m5stack/M5Cardputer/tree/master/examples/Basic/keyboard/inputText 
 
 Hack the Planet!! 
