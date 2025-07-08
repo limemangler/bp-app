@@ -9,7 +9,6 @@
   * FEATURES:
   * + basic loading to cardputer device
   * + basic setup 
-  * + basic loop
   * + splash screen with basic text
   * + prepopulated, basic menu on welcome screen
   * + documented code for quick customizing
@@ -19,7 +18,8 @@
 // These libraries must be included to run this basic app on a cardputer
 #include "M5Cardputer.h" // compatible with esp-32 architecture 
 #include "M5GFX.h" // graphics library
-M5Canvas canvas(&M5Cardputer.Display); // adds the  canvas variable 
+
+M5Canvas canvas(&M5Cardputer.Display); // adds the  canvas variable for graphics
 
 // Splash screen
 void drawSplash() {
@@ -27,7 +27,6 @@ void drawSplash() {
   M5Cardputer.Display.clear();
 
   M5Cardputer.Display.setRotation(1);
-
   canvas.setColorDepth(8);
   canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
   canvas.createSprite(240, 135);
@@ -53,13 +52,12 @@ void drawSplash() {
   // Draw version number in COLOR or 0x0000
   canvas.setTextSize(0.75);
   canvas.setTextColor(0xFFD9); // TFT_LEMONCHIFFON  0xFFD9
-  canvas.drawString("Version 0.1", canvas.width() / 2, canvas.height() / 2 + 50);
+  canvas.drawString("Version 1.0", canvas.width() / 2, canvas.height() / 2 + 50);
   
   canvas.pushSprite(0, 0);
   delay(5000);
   drawMenu();
 }
-
 
 // check for menu input
 void drawMenu(){
@@ -82,7 +80,7 @@ void drawMenu(){
   // draw menu items below the Welcome banner text 
   canvas.setTextDatum(top_left);
   canvas.setTextFont(&fonts::FreeMonoOblique9pt7b);
-  canvas.setTextColor(GREEN);
+  canvas.setTextColor(0x07E0); // lime green
   canvas.setTextSize(1);
   canvas.setTextScroll(false);
   canvas.setTextWrap(true);
@@ -152,10 +150,11 @@ void drawUI() {
 
   String data = "> ";
   
+  // set display variables for input screen graphics
   M5Cardputer.Display.setRotation(1);
   M5Cardputer.Display.setTextSize(0.5);
   M5Cardputer.Display.drawRect(0, 0, M5Cardputer.Display.width(),
-                                M5Cardputer.Display.height() - 28, GREEN);
+                                M5Cardputer.Display.height() - 28, BLUE);
   M5Cardputer.Display.setTextFont(&fonts::FreeSerifBoldItalic18pt7b);
 
   M5Cardputer.Display.fillRect(0, M5Cardputer.Display.height() - 4,
@@ -191,15 +190,14 @@ void drawUI() {
                 canvas.pushSprite(4, 4);
                 data = "> ";
                 // Serial.println(data);
-                // break;
             }
-
             M5Cardputer.Display.fillRect(0, M5Cardputer.Display.height() - 28, M5Cardputer.Display.width(), 25, BLACK);
 
             M5Cardputer.Display.drawString(data, 4, M5Cardputer.Display.height() - 24);
         }
     }
   }
+  // exit the function
   return;
 }
 
