@@ -1,5 +1,5 @@
 /*
-  * This is a basic boilplate for the m5stack cardputer
+  * This is a basic boilerplate for the m5stack cardputer
   * Author: limemangler 
   * Github: https:github.com/limemangler/bp-app
   * 
@@ -39,19 +39,19 @@ void drawSplash() {
   
   // Draw "text" in big COLOR font
   canvas.setTextDatum(middle_center);
-  canvas.setTextSize(1.75);
+  canvas.setTextSize(1.85);
   canvas.setTextColor(0x18CE);  // TFT_MIDNIGHTBLUE 0x18CE
   canvas.drawString("BOILERPLATE", canvas.width() / 2, canvas.height() / 2 - 20);
   
   // Draw GitHub URL in small COLOR font
   canvas.setTextSize(1);
-  canvas.setTextColor(0x07E0);  // TFT_LIME 0x07E0
+  canvas.setTextColor(TFT_GREEN);  // TFT_GREEN 0x07E0
   canvas.drawString("by limemangler", canvas.width() / 2, canvas.height() / 2 + 30);
   //github.com/limemangler
 
   // Draw version number in COLOR or 0x0000
   canvas.setTextSize(0.75);
-  canvas.setTextColor(0xFFD9); // TFT_LEMONCHIFFON  0xFFD9
+  canvas.setTextColor(0xAFE5); // TFT_GREENYELLOW 0xAFE5
   canvas.drawString("Version 1.0", canvas.width() / 2, canvas.height() / 2 + 50);
   
   canvas.pushSprite(0, 0);
